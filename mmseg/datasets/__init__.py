@@ -3,6 +3,7 @@ from .ade import ADE20KDataset
 from .builder import DATASETS, PIPELINES, build_dataloader, build_dataset
 from .chase_db1 import ChaseDB1Dataset
 from .cityscapes import CityscapesDataset
+from .cityscapes import CityscapesDatasetS2V
 from .coco_stuff import COCOStuffDataset
 from .custom import CustomDataset
 from .dark_zurich import DarkZurichDataset
@@ -21,7 +22,7 @@ from .voc import PascalVOCDataset
 
 __all__ = [
     'CustomDataset', 'build_dataloader', 'ConcatDataset', 'RepeatDataset',
-    'DATASETS', 'build_dataset', 'PIPELINES', 'CityscapesDataset',
+    'DATASETS', 'build_dataset', 'PIPELINES', 'CityscapesDataset', 'CityscapesDatasetS2V',
     'PascalVOCDataset', 'ADE20KDataset', 'PascalContextDataset',
     'PascalContextDataset59', 'ChaseDB1Dataset', 'DRIVEDataset', 'HRFDataset',
     'STAREDataset', 'DarkZurichDataset', 'NightDrivingDataset',
