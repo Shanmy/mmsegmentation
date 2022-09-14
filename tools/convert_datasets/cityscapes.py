@@ -1,15 +1,16 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+
+# !! Change Line 27
+
 import argparse
 import os.path as osp
 
 import mmcv
+
 from cityscapesscripts.preparation.json2labelImg import json2labelImg
 
 
-def convert_json_to_label(json_file):
-    label_file = json_file.replace('_polygons.json', '_labelTrainIds.png')
-    json2labelImg(json_file, label_file, 'trainIds')
-
+from pdb import set_trace as st
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -17,14 +18,22 @@ def parse_args():
     parser.add_argument('cityscapes_path', help='cityscapes data path')
     parser.add_argument('--gt-dir', default='gtFine', type=str)
     parser.add_argument('-o', '--out-dir', help='output path')
+    parser.add_argument('-classes', '--classes', help='classes in segmentation', default='')
     parser.add_argument(
         '--nproc', default=1, type=int, help='number of process')
     args = parser.parse_args()
     return args
 
+def convert_json_to_label(json_file, classes=""):
+    if classes == "":
+        label_file = json_file.replace('_polygons.json', f'_labelTrainIds.png')
+    else:
+        label_file = json_file.replace('_polygons.json', f'_labelTrainIds_{classes}.png')
+    json2labelImg(json_file, label_file, encoding='trainIds', classes=classes)
 
 def main():
     args = parse_args()
+
     cityscapes_path = args.cityscapes_path
     out_dir = args.out_dir if args.out_dir else cityscapes_path
     mmcv.mkdir_or_exist(out_dir)
@@ -35,9 +44,9 @@ def main():
     for poly in mmcv.scandir(gt_dir, '_polygons.json', recursive=True):
         poly_file = osp.join(gt_dir, poly)
         poly_files.append(poly_file)
+
     if args.nproc > 1:
-        mmcv.track_parallel_progress(convert_json_to_label, poly_files,
-                                     args.nproc)
+        mmcv.track_parallel_progress(convert_json_to_label, poly_files, args.nproc)
     else:
         mmcv.track_progress(convert_json_to_label, poly_files)
 
