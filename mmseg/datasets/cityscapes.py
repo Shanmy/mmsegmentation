@@ -225,12 +225,12 @@ class CityscapesDatasetS2V(CustomDataset):
     """
 
 
-    CLASSES = ('road', 'sidewalk')
-    PALETTE = [[128, 64, 128], [244, 35, 232]]
+    CLASSES = ('road', 'sidewalk', 'background')
+    PALETTE = [[128, 64, 128], [244, 35, 232], [0, 0, 0]]
 
     def __init__(self,
                  img_suffix='_leftImg8bit.png',
-                 seg_map_suffix='_gtFine_labelTrainIds_s2v.png',
+                 seg_map_suffix='_gtFine_labelTrainIds_s2v2.png',
                  **kwargs):
         super(CityscapesDatasetS2V, self).__init__(
             img_suffix=img_suffix, seg_map_suffix=seg_map_suffix, **kwargs)
@@ -360,7 +360,7 @@ class CityscapesDatasetS2V(CustomDataset):
             metrics.remove('cityscapes')
         if len(metrics) > 0:
             eval_results.update(
-                super(CityscapesDataset,
+                super(CityscapesDatasetS2V,
                       self).evaluate(results, metrics, logger))
 
         return eval_results

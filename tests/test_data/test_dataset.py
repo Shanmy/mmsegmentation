@@ -12,7 +12,7 @@ import torch
 from PIL import Image
 
 from mmseg.core.evaluation import get_classes, get_palette
-from mmseg.datasets import (DATASETS, ADE20KDataset, CityscapesDataset,
+from mmseg.datasets import (DATASETS, ADE20KDataset, CityscapesDataset, CityscapesDatasetS2V,
                             COCOStuffDataset, ConcatDataset, CustomDataset,
                             ISPRSDataset, LoveDADataset, MultiImageMixDataset,
                             PascalVOCDataset, PotsdamDataset, RepeatDataset,
@@ -21,6 +21,7 @@ from mmseg.datasets import (DATASETS, ADE20KDataset, CityscapesDataset,
 
 def test_classes():
     assert list(CityscapesDataset.CLASSES) == get_classes('cityscapes')
+    assert list(CityscapesDatasetS2V.CLASSES) == get_classes('cityscapes_s2v')
     assert list(PascalVOCDataset.CLASSES) == get_classes('voc') == get_classes(
         'pascal_voc')
     assert list(
@@ -67,7 +68,8 @@ def test_classes_file_path():
 
 
 def test_palette():
-    assert CityscapesDataset.PALETTE == get_palette('cityscapes')
+    
+    assert CityscapesDatasetS2V.PALETTE == get_palette('cityscapes_s2v')
     assert PascalVOCDataset.PALETTE == get_palette('voc') == get_palette(
         'pascal_voc')
     assert ADE20KDataset.PALETTE == get_palette('ade') == get_palette('ade20k')
@@ -662,6 +664,37 @@ def test_cityscapes():
         pseudo_results, metric='cityscapes', imgfile_prefix='.format_city')
 
     shutil.rmtree('.format_city')
+
+    def test_cityscapes_s2v():
+        test_dataset = CityscapesDatasetS2V(
+            pipeline=[],
+            img_dir=osp.join(
+                osp.dirname(__file__),
+                '../data/pseudo_cityscapes_s2v_dataset/leftImg8bit'),
+            ann_dir=osp.join(
+                osp.dirname(__file__), '../data/pseudo_cityscapes_s2v_dataset/gtFine'))
+        assert len(test_dataset) == 1
+
+        gt_seg_maps = list(test_dataset.get_gt_seg_maps())
+
+        # Test format_results
+        pseudo_results = []
+        for idx in range(len(test_dataset)):
+            h, w = gt_seg_maps[idx].shape
+            pseudo_results.append(np.random.randint(low=0, high=19, size=(h, w)))
+
+        file_paths = test_dataset.format_results(pseudo_results, '.format_city')
+        assert len(file_paths) == len(test_dataset)
+        temp = np.array(Image.open(file_paths[0]))
+        assert np.allclose(temp,
+                        test_dataset._convert_to_label_id(pseudo_results[0]))
+
+        # Test cityscapes evaluate
+
+        test_dataset.evaluate(
+            pseudo_results, metric='cityscapes_s2v', imgfile_prefix='.format_city')
+
+        shutil.rmtree('.format_city')
 
 
 @pytest.mark.parametrize('separate_eval', [True, False])

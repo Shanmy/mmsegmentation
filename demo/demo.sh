@@ -1,4 +1,5 @@
-python demo/image_demo.py demo/street_images/sidewalk1.jpeg \
-configs/segformer/segformer_mit-b5_8x1_1024x1024_160k_cityscapes.py \
-checkpoints/segformer_mit-b5_8x1_1024x1024_160k_cityscapes_20211206_072934-87a052ec.pth \
---device cuda:0 --out-file demo/street_results/sidewalk1_segformer.jpg
+python image_demo.py street_images/street7.png \
+../configs/segformer/segformer_mit-b0_8x1_1024x1024_160k_cityscapes_s2v.py \
+../checkpoints/iter_160000_s2v.pth \
+--device cuda:0 --out-file street_results/street7_segformerb0s2v.jpg \
+--palette cityscapes_s2v

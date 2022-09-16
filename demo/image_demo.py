@@ -41,7 +41,7 @@ def main():
     norm_probs = np.clip(((probs[0, 1, :, :].cpu().detach().numpy() + 27) * 7), 0, 255).astype(np.uint8)
     blur_vis = cv2.applyColorMap(norm_probs, cv2.COLORMAP_JET)
     cv2.imwrite("heat.png", blur_vis)
-    st()
+    # st()
     # show the results
     show_result_pyplot(
         model,

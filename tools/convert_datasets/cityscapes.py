@@ -24,7 +24,7 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-def convert_json_to_label(json_file, classes=""):
+def convert_json_to_label(json_file, classes="s2v2"):
     if classes == "":
         label_file = json_file.replace('_polygons.json', f'_labelTrainIds.png')
     else:
